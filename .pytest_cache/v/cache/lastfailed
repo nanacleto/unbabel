@@ -1,0 +1,4 @@
+{
+  "login.py::login::test_login_page": true, 
+  "login.py::login::test_search_in_python_org": true
+}
