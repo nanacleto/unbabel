@@ -18,10 +18,19 @@ class unbable:
 
    x ={"country_list": ["BE", "DE", "NY"]}
 
+
    print  headers
    print  x
 
    response = rq.post(url, headers=headers, json=x)
+
+
+
+   print  headers
+   print  x
+
+   response = rq.post(url, headers=headers, json=x)
+
 
    print response.status_code
    print response.content
