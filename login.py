@@ -26,10 +26,13 @@ class login(unittest.TestCase):
    # def test_select_batch(self):
        self.driver.find_element_by_xpath("//a[contains(text(),'ES to EN')]").click()
 
-       try:
-           element = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "c-Sidebar__tab")))
-       except NoSuchElementException as exception:
-           print "More than 10 seconds"
+        try:
+           element = WebDriverWait(self.driver, 10).until(EC.invisibility_of_element_located((By.CLASS_NAME, "c-LoadingScreen__message")))
+       except TimeoutException as exception:
+           print "More than 10 seconds. Here Exception message: '{0}'".format(exception.message)
+           assert False
+
+	"c-TranslationViewer  is-highlighted-glossaries is-highlighted-annotations is-highlighted-anonimized is-highlighted-markers is-source-active"
 
 
 
