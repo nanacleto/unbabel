@@ -1,42 +1,68 @@
 import unittest
 from selenium import webdriver
+from login_and_go_tool import loginPage
+import time
+import datetime
+from handle_tool import toolpage
+import Variables as VARS
+
+from selenium.webdriver.common.action_chains import ActionChains
+
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import TimeoutException
+
+
+
+TODAY = datetime.datetime.now().strftime("%Y-%m-%d-%H_%M_%S")
 
 class login(unittest.TestCase):
 
     @classmethod
-    def setUp(self):
-       self.driver = webdriver.Firefox()
-       self.driver.maximize_window()
+    def setUpClass(cls):
+       cls.driver = webdriver.Firefox()
+       cls.driver.maximize_window()
+       print " ************   START TEST   *******************"
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.driver.implicitly_wait(5)
+        cls.driver.close()
+
+        print " ************   END TEST   *******************"
+
+
 
     def test_login(self):
+       driver = self.driver
+
        self.driver.get("https://staging.annotation.tools.unbabel.com")
        self.assertIn("Annotation Tool", self.driver.title)
-       self.driver.find_element_by_xpath("//button[@class='btn-round btn-white-home']").click()
 
-       self.driver.find_element_by_xpath("//input[@name='username']").send_keys("emanuel+annotator3")
-       self.driver.find_element_by_xpath("//input[@name='password']").send_keys("nuno_anacleto@unbabel")
+       login = loginPage(driver)
+       login.go_to_sign_in()
+       login.set_username("emanuel+annotator3")
+       login.set_password("nuno_anacleto@unbabel")
+       login.click_login()
+       login.open_tool()
 
-       self.driver.find_element_by_xpath("//button[@class='unbabel-btn-round unbabel-blue btn-block']").click()
-
-   # def test_select_batch(self):
-       self.driver.find_element_by_xpath("//a[contains(text(),'ES to EN')]").click()
-
-        try:
-           element = WebDriverWait(self.driver, 10).until(EC.invisibility_of_element_located((By.CLASS_NAME, "c-LoadingScreen__message")))
-       except TimeoutException as exception:
-           print "More than 10 seconds. Here Exception message: '{0}'".format(exception.message)
-           assert False
-
-	"c-TranslationViewer  is-highlighted-glossaries is-highlighted-annotations is-highlighted-anonimized is-highlighted-markers is-source-active"
+       time.sleep(5)  #  !!!!!!!!  hardcoded, not good !!!!!!!!!!!!
 
 
+       tool = toolpage(driver)
+       tool.select_en_text()
+       tool.set_error_type(VARS.ERROR_ADITION)
+       tool.click_error_tree("Addition")
 
-
+       #tool.set_error_sev("minorSeverity")
+       tool.set_error_sev(VARS.SEVERITY_MINOR)
+       tool.click_add_button()
+       tool.select_any_side_bar(VARS.SIDEBAR_FINISH_REPORT)
+       tool.insert_comments("This comment was added at {0}, by Nuno Anacleto".format(TODAY))
+       tool.finish_exercice()
+       tool.finish_job(VARS.FINISH_JOB_NO)
 
 
 
